@@ -1,0 +1,37 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<title>Getting Started: Handling Form Submission</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	hi
+	<form action="#" th:action="@{/generate_url}" method="post"
+		th:object="${urlRequest}">
+		<label>Full url:</label> <input type="text" th:field="*{url}" /><br />
+
+		<label>Tiny url:</label> <input type="text" th:field="*{short_url}" /><br />
+
+		<button type="submit">Shorten</button>
+	</form>
+
+
+	<div align="center">
+		<table BORDER="1" CELLPADDING="3" CELLSPACING="1">
+			<tr>
+				<th>URL</th>
+				<th>SHORT URL</th>
+				<th>EXPIRED</th>
+			</tr>
+			<tr th:each="createdUrl : ${createdUrlList}">
+				<td th:text="${createdUrl.url}">qwer</td>
+				<td th:text="${prefixUrl+createdUrl.shorturl}">asdfdsafsdfafdsaklfdas;j</td>
+				<td th:text="${(createdUrl.expireat-currentTime)<0?'true':'false'}">asdfdsafsdfafdsaklfdas;j</td>
+			</tr>
+		</table>
+	</div>
+
+
+
+
+</body>
+</html>
