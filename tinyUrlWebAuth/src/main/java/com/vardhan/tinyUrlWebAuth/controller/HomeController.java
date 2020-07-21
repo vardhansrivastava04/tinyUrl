@@ -14,11 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.vardhan.tinyUrlWebAuth.Utils.TinyUrlUtil;
 import com.vardhan.tinyUrlWebAuth.constants.TinyUrlConstants;
 import com.vardhan.tinyUrlWebAuth.dto.Url;
 import com.vardhan.tinyUrlWebAuth.dto.UrlRequest;
+import com.vardhan.tinyUrlWebAuth.dto.Urllog;
 import com.vardhan.tinyUrlWebAuth.service.TinyUrlService;
 
 @Controller
@@ -94,5 +96,16 @@ public class HomeController {
 		model.addAttribute(TinyUrlConstants.ATTRIBUTE_PREFIX_URL, prefixUrl);
 		model.addAttribute(TinyUrlConstants.ATTRIBUTE_CURRENT_TIME, Calendar.getInstance().getTimeInMillis());
 	}
+	
+	
+	@PostMapping(value="/log")
+	public String getEditPerson(@RequestParam("shortUrl") String shortUrl, Model model) {
+		List<Urllog> urlLog = tinyUrlService.getUrlLogs(shortUrl);
+		model.addAttribute(TinyUrlConstants.ATTRIBUTE_PREFIX_URL, prefixUrl);
+		model.addAttribute(TinyUrlConstants.ATTRIBUTE_SHORT_URL, shortUrl);
+	    model.addAttribute("urllog", urlLog);
+
+	    return "/urllog";
+	}    
 
 }

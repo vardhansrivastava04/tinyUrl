@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-	hi
+	
 	<form action="#" th:action="@{/generate_url}" method="post"
 		th:object="${urlRequest}">
 		<label>Full url:</label> <input type="text" th:field="*{url}" /><br />
@@ -21,11 +21,19 @@
 				<th>URL</th>
 				<th>SHORT URL</th>
 				<th>EXPIRED</th>
+				<th>LOGS</th>
 			</tr>
 			<tr th:each="createdUrl : ${createdUrlList}">
 				<td th:text="${createdUrl.url}">qwer</td>
 				<td th:text="${prefixUrl+createdUrl.shorturl}">asdfdsafsdfafdsaklfdas;j</td>
 				<td th:text="${(createdUrl.expireat-currentTime)<0?'true':'false'}">asdfdsafsdfafdsaklfdas;j</td>
+				<td>
+					<form method="POST"
+						th:action="@{/log(shortUrl=${createdUrl.shorturl})}">
+						<button type="submit" name="submit" value="value"
+							class="link-button">LOGS</button>
+					</form>
+				</td>
 			</tr>
 		</table>
 	</div>

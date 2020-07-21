@@ -114,8 +114,14 @@ public class TinyUrlDAOImpl implements TinyUrlDAO {
 		String shortUrl = (String) mdString.subSequence(0, 6);
 		url.setShorturl(shortUrl);
 		cassandraTemplate.insert(url);
-
 		return shortUrl;
+	}
+
+	@Override
+	public List<Urllog> getUrlLogs(String shortUrl) {
+		String query = "select * from tiny.urllog where shorturl='"+shortUrl+"'";
+		List<Urllog> output = (List<Urllog>) cassandraTemplate.select(query, Urllog.class);
+		return output;
 	}
 
 }
