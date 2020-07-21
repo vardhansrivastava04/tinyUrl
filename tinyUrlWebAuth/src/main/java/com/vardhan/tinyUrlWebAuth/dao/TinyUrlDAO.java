@@ -11,7 +11,7 @@ public interface TinyUrlDAO {
 
 	public List<Url> getCreatedUrl(String username);
 
-	public String getLongUrl(String shortUrl);
+	public String getLongUrl(String shortUrl, String username);
 
 	public String generateTinyUrl(String url, String username);
 

@@ -17,8 +17,8 @@ public class TinyUrlServiceImpl implements TinyUrlService{
 		return tinyUrlDAO.getCreatedUrl(username);
 	}
 	@Override
-	public String getLongUrl(String shortUrl) {
-		return tinyUrlDAO.getLongUrl(shortUrl);
+	public String getLongUrl(String shortUrl,String username) {
+		return tinyUrlDAO.getLongUrl(shortUrl,username);
 	}
 	@Override
 	public String generateTinyUrl(String url, String username) {

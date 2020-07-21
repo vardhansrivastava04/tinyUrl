@@ -14,6 +14,7 @@ import org.springframework.data.cassandra.core.CassandraOperations;
 
 import com.vardhan.tinyUrlWebAuth.dao.TinyUrlDAO;
 import com.vardhan.tinyUrlWebAuth.dto.Url;
+import com.vardhan.tinyUrlWebAuth.dto.Urllog;
 
 public class TinyUrlDAOImpl implements TinyUrlDAO {
 
@@ -36,6 +37,7 @@ public class TinyUrlDAOImpl implements TinyUrlDAO {
 		String shortUrl = (String) mdString.subSequence(0, 6);
 		saveUrl.setShorturl(shortUrl);
 		cassandraTemplate.insert(url);
+		
 		return prefixUrl + shortUrl;
 	}
 
@@ -80,17 +82,21 @@ public class TinyUrlDAOImpl implements TinyUrlDAO {
 	}
 
 	@Override
-	public String getLongUrl(String shortUrl) {
+	public String getLongUrl(String shortUrl, String username) {
 		String query = "SELECT * FROM tiny.url WHERE shorturl = '" + shortUrl + "'";
 		List<Url> output = (List<Url>) cassandraTemplate.select(query, Url.class);
 		Url current = null;
 		String ret = null;
+		Urllog urllog = new Urllog();
+		urllog.setAccessedat(Calendar.getInstance().getTimeInMillis());
+		urllog.setUserid(username);
+		urllog.setShorturl(shortUrl);
+		cassandraTemplate.insert(urllog);
 		if (output != null && !output.isEmpty()) {
 			current = output.get(0);
 			ret = current.getUrl();
 			if (Calendar.getInstance().getTimeInMillis() > current.getExpireat()) {
 				ret = "urlExpired";
-
 			}
 		}
 		return ret;

@@ -1,8 +1,5 @@
 package com.vardhan.tinyUrlWebAuth.controller;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -10,9 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.cassandra.core.CassandraOperations;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.vardhan.tinyUrlWebAuth.Utils.TinyUrlUtil;
 import com.vardhan.tinyUrlWebAuth.constants.TinyUrlConstants;
 import com.vardhan.tinyUrlWebAuth.dto.Url;
 import com.vardhan.tinyUrlWebAuth.dto.UrlRequest;
@@ -31,9 +26,6 @@ public class HomeController {
 
 	@Autowired
 	TinyUrlService tinyUrlService;
-
-	@Autowired
-	CassandraOperations cassandraTemplate;
 
 	@Value("${app.url}")
 	String prefixUrl;
@@ -75,31 +67,21 @@ public class HomeController {
 			urlRequest.setUrl("Enter url");
 			urlRequest.setShort_url("");
 		}
-		List<Url> createdUrl = tinyUrlService.getCreatedUrl(getLoggedInUserName());
+		List<Url> createdUrl = tinyUrlService.getCreatedUrl(TinyUrlUtil.getLoggedInUserName());
 		setGeneratePageModelAttributes(urlRequest, model, createdUrl);
 		return "generate_tiny";
 	}
 
-	private String getLoggedInUserName() {
-		String username = "123";
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (principal instanceof UserDetails) {
-			username = ((UserDetails) principal).getUsername();
-		} else {
-			username = principal.toString();
-		}
-		return username;
-	}
-
+	
 
 	@PostMapping(path = "/generate_url")
 	public String saveShortUrl(@ModelAttribute("urlRequest") UrlRequest urlRequest, BindingResult bindingResult,
 			Model model) {
 		if (bindingResult.hasErrors())
 			return "error";
-		String username = getLoggedInUserName();
+		String username = TinyUrlUtil.getLoggedInUserName();
 		String shortUrl = tinyUrlService.generateTinyUrl(urlRequest.getUrl(), username);
-		List<Url> createdUrl = tinyUrlService.getCreatedUrl(getLoggedInUserName());
+		List<Url> createdUrl = tinyUrlService.getCreatedUrl(username);
 		urlRequest.setShort_url(shortUrl);
 		urlRequest.setAnswer(true);
 		setGeneratePageModelAttributes(urlRequest, model, createdUrl);
@@ -111,22 +93,6 @@ public class HomeController {
 		model.addAttribute(TinyUrlConstants.ATTRIBUTE_CREATED_URL_LIST, createdUrl);
 		model.addAttribute(TinyUrlConstants.ATTRIBUTE_PREFIX_URL, prefixUrl);
 		model.addAttribute(TinyUrlConstants.ATTRIBUTE_CURRENT_TIME, Calendar.getInstance().getTimeInMillis());
-	}
-
-	public static String getMd5(String input) {
-		try {
-
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] messageDigest = md.digest(input.getBytes());
-			BigInteger no = new BigInteger(1, messageDigest);
-			String hashtext = no.toString(16);
-			while (hashtext.length() < 32) {
-				hashtext = "0" + hashtext;
-			}
-			return hashtext;
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 }

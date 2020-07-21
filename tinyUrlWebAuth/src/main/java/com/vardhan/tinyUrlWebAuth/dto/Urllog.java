@@ -7,19 +7,20 @@ import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-@Table("url")
+@Table("urllog")
 public class Urllog implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@PrimaryKeyColumn(name = "shorturl", ordinal = 0, type = PrimaryKeyType.CLUSTERED)
+	
 	@Column("shorturl")
 	private String shorturl;
 
+	@PrimaryKeyColumn(name = "accessedat", ordinal = 2, type = PrimaryKeyType.PARTITIONED)
 	@Column("accessedat")
 	private Long accessedat;
 
-	@PrimaryKeyColumn(name = "userid", ordinal = 0, type = PrimaryKeyType.CLUSTERED)
+	@PrimaryKeyColumn(name = "userid", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
 	@Column("userid")
 	private String userid;
 
