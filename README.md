@@ -1,6 +1,12 @@
 # tinyUrl
 
 
+TECHNOLOGIES USED:
+1. Spring boot 2.3.1.RELEASE
+2. Tomcat 9.0.36
+3. Spring security
+4. Thymeleaf
+
 CQL QUERY LOCATION:
 /tinyUrl/tinyUrlWebAuth/src/main/resources/cql/tiny.cql
 
